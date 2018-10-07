@@ -454,7 +454,7 @@ void analyze_segments( char * sample_segment, char ** candidate_segments, int nu
 	/* Some helpful variables you might want to use */
 	int * scores          = NULL;
 	int sample_length     = 0;
-	int candidate_length[]  = 0;
+	int candidate_length[1]  = 0;
 	int i                 = 0;
 	int has_perfect_match = 0;
 	int score             = 0;
