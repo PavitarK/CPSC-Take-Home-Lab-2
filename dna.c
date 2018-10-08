@@ -1,30 +1,27 @@
 /*
  File:        dna.c
  Purpose:     Consumes a formatted DNA sequence file
-              to determine which of a group of candidate
-              sequences of nucleotides best matches a
-              specified sample.  The formatted DNA
-              sequence file is a txt file (threes samples
-              are provided in the Resource Files folder).
+			  to determine which of a group of candidate
+			  sequences of nucleotides best matches a
+			  specified sample.  The formatted DNA
+			  sequence file is a txt file (threes samples
+			  are provided in the Resource Files folder).
  Author:			Your names
  Student #s:	12345678 and 12345678
  CS Accounts:	a1a1 and b2b2
  Date:				Add the date here
  */
- 
-/******************************************************************
- PLEASE EDIT THIS FILE
 
- You need to complete the analyze_segments and calculate_score
- functions.
+ /******************************************************************
+  PLEASE EDIT THIS FILE
+  You need to complete the analyze_segments and calculate_score
+  functions.
+  You need to understand the entire program
+  Comments that start with // should be replaced with code
+  Comments that are surrounded by * are hints
+  ******************************************************************/
 
- You need to understand the entire program
-
- Comments that start with // should be replaced with code
- Comments that are surrounded by * are hints
- ******************************************************************/
-
-/* Preprocessor directives */	
+  /* Preprocessor directives */
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -39,13 +36,13 @@
  * RETURN:    IF the program exits correctly
  *            THEN 0 ELSE 1
  */
-int main( void )
+int main(void)
 {
 	/* Variables */
-	char *  sample_segment     = NULL;
+	char *  sample_segment = NULL;
 	char ** candidate_segments = NULL;
 	char    main_menu_choices[NUMBER_OF_MENU_ITEMS][MAX_MENU_ITEM_SIZE]
-					= { "1. Load file", "2. Perform analysis", "3. Exit" };
+		= { "1. Load file", "2. Perform analysis", "3. Exit" };
 	int     number_of_candidates = 0;
 	int     menu_choice = 0;
 	int     number_of_main_menu_choices = NUMBER_OF_MENU_ITEMS;
@@ -54,41 +51,40 @@ int main( void )
 	do {
 
 		/* Prints the menu and asks the user to make a choice */
-		menu_choice = get_menu_choice( PROGRAM_NAME, main_menu_choices, number_of_main_menu_choices );
+		menu_choice = get_menu_choice(PROGRAM_NAME, main_menu_choices, number_of_main_menu_choices);
 
-		switch ( menu_choice )
+		switch (menu_choice)
 		{
 			/* If the user chooses 1, we need to load a file */
-			case 1:
-				/* First clear any existing memory, then ask the user to enter the file name,
-				   and then try to load it */
-				clear_memory( &sample_segment, &candidate_segments, &number_of_candidates );
-				number_of_candidates = load_file( &sample_segment, &candidate_segments);
-				break;
+		case 1:
+			/* First clear any existing memory, then ask the user to enter the file name,
+			   and then try to load it */
+			clear_memory(&sample_segment, &candidate_segments, &number_of_candidates);
+			number_of_candidates = load_file(&sample_segment, &candidate_segments);
+			break;
 
 			/* If the user chooses 2, we want to process the file */
-			case 2:
-				/* But only if a file has been already loaded! */
-				if ( sample_segment != NULL ) {
-					analyze_segments( sample_segment, candidate_segments, number_of_candidates );
-				}
-				break;
+		case 2:
+			/* But only if a file has been already loaded! */
+			if (sample_segment != NULL) {
+				analyze_segments(sample_segment, candidate_segments, number_of_candidates);
+			}
+			break;
 
 			/* If the user chooses 3, we want to free dynamically allocated memory, and end the program */
-			case 3:
-				clear_memory( &sample_segment, &candidate_segments, &number_of_candidates );
-				end_program( 0 );
-				break;
+		case 3:
+			clear_memory(&sample_segment, &candidate_segments, &number_of_candidates);
+			end_program(0);
+			break;
 
 			/* We have to have a default choice in a switch statement */
-			default:
-				;
-				break;
+		default:
+			;
+			break;
 		}
-	}
-	while ( 1 ); /* Ad infinitum (1 is always true in C, 0 is always false, so while(1) is an infinite loop) */
-	
-	end_program( 0 );
+	} while (1); /* Ad infinitum (1 is always true in C, 0 is always false, so while(1) is an infinite loop) */
+
+	end_program(0);
 }
 
 /*
@@ -107,37 +103,37 @@ int main( void )
  * POST:      NULL (no side-effects)
  * RETURN:    INT representing valid menu choice
  */
-int get_menu_choice( char * menu_name,
-					 char menu_choices[][MAX_MENU_ITEM_SIZE],
-					 int number_of_choices )
+int get_menu_choice(char * menu_name,
+	char menu_choices[][MAX_MENU_ITEM_SIZE],
+	int number_of_choices)
 {
-    /* Variable list */
-	char line  [BUFSIZE];
-	char extra [BUFSIZE];
+	/* Variable list */
+	char line[BUFSIZE];
+	char extra[BUFSIZE];
 	int  i = 0, menu_item;
-	
+
 	do {
-		printf( "%s\n", menu_name );
-		for ( i = 0; i < number_of_choices; ++i ) {
+		printf("%s\n", menu_name);
+		for (i = 0; i < number_of_choices; ++i) {
 			printf("%s\n", menu_choices[i]);
 		}
-		printf( "> " );
-		
+		printf("> ");
+
 		/* If user enters EOF which is Control-C in Windows, then fgets returns a null pointer which is
 		   interpreted as 0.  The user probably wants to quit the program, so we clear the error in
 		   standard input and return the final menu item (quit, #3) */
-		if ( !( fgets( line, BUFSIZE, stdin ) ) ) {
-			clearerr( stdin );
-			return number_of_choices;			
+		if (!(fgets(line, BUFSIZE, stdin))) {
+			clearerr(stdin);
+			return number_of_choices;
 		}
 	}
 	/* Disallows incorrect menu choices by accepting [0, #ofchoices] and ignoring other input */
-	while ( sscanf_s( line, "%d%s", &menu_item, extra, BUFSIZE ) != 1 
-		                      || menu_item < 0 || menu_item > number_of_choices );
+	while (sscanf_s(line, "%d%s", &menu_item, extra, BUFSIZE) != 1
+		|| menu_item < 0 || menu_item > number_of_choices);
 	return menu_item;
 }
 
-/* 
+/*
  * Clears any dynamically allocated memory and resets the candidate count.
  *
  * PARAM:     double pointer to the sample segment
@@ -147,19 +143,19 @@ int get_menu_choice( char * menu_name,
  * POST:      memory has been deallocated, number of candidates reset to 0
  * RETURN:    VOID
  */
-void clear_memory( char ** sample_segment, char *** candidate_segments, int * number_of_candidates )
+void clear_memory(char ** sample_segment, char *** candidate_segments, int * number_of_candidates)
 {
 	int i = 0;
 
-	if ( *sample_segment != NULL ) {
+	if (*sample_segment != NULL) {
 		free(*sample_segment);
 		*sample_segment = NULL;
 	}
-	if ( *candidate_segments != NULL ) {
+	if (*candidate_segments != NULL) {
 		for (i = 0; i < *number_of_candidates; ++i) {
-			free( *(*candidate_segments + i) ); /*  Freeing triple pointers can be tricky! */
+			free(*(*candidate_segments + i)); /*  Freeing triple pointers can be tricky! */
 		}
-		free( *candidate_segments );
+		free(*candidate_segments);
 		*candidate_segments = NULL;
 
 		*number_of_candidates = 0; /* We don't want to forget to reset the candidate counter! */
@@ -176,35 +172,35 @@ void clear_memory( char ** sample_segment, char *** candidate_segments, int * nu
  * POST:      File has been copied to main memory
  * RETURN:    Number of candidate sequences in specified file
  */
-int load_file( char ** sample_segment, char *** candidate_segments )
+int load_file(char ** sample_segment, char *** candidate_segments)
 {
-    /* Variable list */
-	char   file_name [BUFSIZE];
+	/* Variable list */
+	char   file_name[BUFSIZE];
 	FILE * fp = NULL;
-	int    i  = 0;
+	int    i = 0;
 	int    error = 0;
 	int    number_of_candidates = 0;
 
 	/* Acquires file name from user */
-	get_user_input( "\nEnter file name: ", file_name );
+	get_user_input("\nEnter file name: ", file_name);
 
 	printf("Loading file %s\n", file_name);
 
 	/* Opens file */
-	error = fopen_s( &fp, file_name, "r" );
+	error = fopen_s(&fp, file_name, "r");
 
 	/* If the return value specifies that the file cannot be opened,
 	prints a suitable message to standard output and returns 0 */
-	if ( error != 0 ) {
-		fprintf( stderr, "File %s cannot be loaded\n", file_name );
+	if (error != 0) {
+		fprintf(stderr, "File %s cannot be loaded\n", file_name);
 		return 0;
 	}
 
 	/* Extracts contents of the file, and determines number of candidate segments */
-	number_of_candidates = extract_dna( fp, sample_segment, candidate_segments );
+	number_of_candidates = extract_dna(fp, sample_segment, candidate_segments);
 
 	/* Closes the file and returns number of candidates extracted from the DNA */
-	fclose( fp );
+	fclose(fp);
 	return number_of_candidates;
 }
 
@@ -215,10 +211,10 @@ int load_file( char ** sample_segment, char *** candidate_segments )
  * POST:      execution has ended
  * RETURN:    VOID
  */
-void end_program( int exit_value )
+void end_program(int exit_value)
 {
-	system( "pause" );
-	exit( exit_value );
+	system("pause");
+	exit(exit_value);
 }
 
 /*
@@ -229,30 +225,30 @@ void end_program( int exit_value )
  * RETURN:    IF nucleotide_1 == nucleotide_2
  *			  THEN 1
  *            ELSE 0
- */ 
-int is_base_pair( char nucleotide_1, char nucleotide_2 )
+ */
+int is_base_pair(char nucleotide_1, char nucleotide_2)
 {
-	switch( nucleotide_1 )
+	switch (nucleotide_1)
 	{
-		case 'A': case 'a':
-			if (nucleotide_2 == 'T' || nucleotide_2 == 't' )
-				return 1;
-			break;
-		case 'T': case 't':
-			if (nucleotide_2 == 'A' || nucleotide_2 == 'a' )
-				return 1;
-			break;
-		case 'C': case 'c':
-			if (nucleotide_2 == 'G' || nucleotide_2 == 'g' )
-				return 1;
-			break;
-		case 'G': case 'g':
-			if (nucleotide_2 == 'C' || nucleotide_2 == 'c' )
-				return 1;
-			break;
-		default:
-			return 0;
-			break;
+	case 'A': case 'a':
+		if (nucleotide_2 == 'T' || nucleotide_2 == 't')
+			return 1;
+		break;
+	case 'T': case 't':
+		if (nucleotide_2 == 'A' || nucleotide_2 == 'a')
+			return 1;
+		break;
+	case 'C': case 'c':
+		if (nucleotide_2 == 'G' || nucleotide_2 == 'g')
+			return 1;
+		break;
+	case 'G': case 'g':
+		if (nucleotide_2 == 'C' || nucleotide_2 == 'c')
+			return 1;
+		break;
+	default:
+		return 0;
+		break;
 	}
 	return 0;
 }
@@ -267,15 +263,15 @@ int is_base_pair( char nucleotide_1, char nucleotide_2 )
  *            THEN returns the index of the specified codon_code in the codon_codes 2D array
  *            ELSE -1
  */
-int get_codon_index( char * codon_code )
+int get_codon_index(char * codon_code)
 {
 	int i;
-	for ( i = 0; i < NUMBER_OF_CODONS; ++i) {
+	for (i = 0; i < NUMBER_OF_CODONS; ++i) {
 
-		if ( codon_codes[i][0] == codon_code[0] &&
-			 codon_codes[i][1] == codon_code[1] &&
-			 codon_codes[i][2] == codon_code[2]) {
-		     return i;
+		if (codon_codes[i][0] == codon_code[0] &&
+			codon_codes[i][1] == codon_code[1] &&
+			codon_codes[i][2] == codon_code[2]) {
+			return i;
 		}
 	}
 	return -1;
@@ -290,24 +286,23 @@ int get_codon_index( char * codon_code )
  * POST:      Response buffer contains the user response
  * RETURN:    VOID
  */
-void get_user_input( char * message, char * response )
+void get_user_input(char * message, char * response)
 {
-	char line [BUFSIZE];
+	char line[BUFSIZE];
 
 	do {
-		printf( "%s", message );
-		
+		printf("%s", message);
+
 		/* If user enters EOF which is Control-C in Windows
 		   then fgets returns a null pointer which is
 		   interpreted as 0.  We clear the error in
 		   standard input and end program */
-		if ( !( fgets( line, BUFSIZE, stdin ) ) ) {
-			clearerr( stdin );
+		if (!(fgets(line, BUFSIZE, stdin))) {
+			clearerr(stdin);
 			printf("Error acquiring user input\n");
-			end_program( 1 );			
+			end_program(1);
 		}
-	}
-    while ( sscanf_s( line, "%s", response, BUFSIZE ) != 1 );
+	} while (sscanf_s(line, "%s", response, BUFSIZE) != 1);
 
 	return;
 }
@@ -323,13 +318,13 @@ void get_user_input( char * message, char * response )
  * PARAM:     Double pointer to the sample segment
  * PARAM:     Triple pointer to a collection of candidate segments
  * PRE:       All the pointers are valid
- * POST:      sample_segment now points to dynamically allocated memory that 
+ * POST:      sample_segment now points to dynamically allocated memory that
  *            contains the sample DNA sequence extracted from the specified file
- * POST:      candidate_segments now points to dynamically allocated memory that 
+ * POST:      candidate_segments now points to dynamically allocated memory that
  *            contains the candidate DNA sequences extracted from the specified file
  * RETURN:    the number of candidate_segments extracted from the specified file
  */
-int extract_dna( FILE * file_pointer, char ** sample_segment, char *** candidate_segments )
+int extract_dna(FILE * file_pointer, char ** sample_segment, char *** candidate_segments)
 {
 	/* Variables */
 	int  i = 0, j = 0;
@@ -339,48 +334,49 @@ int extract_dna( FILE * file_pointer, char ** sample_segment, char *** candidate
 	int  sequence_length = 0;
 	int  number_of_candidates = 0;
 	char character = ' ';
-	char line_buffer [BUFSIZE];
+	char line_buffer[BUFSIZE];
 
 	/* Moves to the beginning of the file */
-	fseek( file_pointer, 0, SEEK_SET );
-	
+	fseek(file_pointer, 0, SEEK_SET);
+
 	/* Here's an easy way to ignore the first line (the header)! */
-	while ( ( character = fgetc( file_pointer ) ) != '\n' ) { ; }
+	while ((character = fgetc(file_pointer)) != '\n') { ; }
 
 	/* Acquires sample sequence (we know it's in the second line) */
-	while ( new_line == 0 && fgets( line_buffer, BUFSIZE, file_pointer)) {
+	while (new_line == 0 && fgets(line_buffer, BUFSIZE, file_pointer)) {
 
 		/* Check if the line ends with a newline character and increments the sample length */
-		if (line_buffer[ strlen(line_buffer) - 1 ] == '\n') {
+		if (line_buffer[strlen(line_buffer) - 1] == '\n') {
 			new_line = 1;
 			line_length = strlen(line_buffer) - 1;
-		} else {
+		}
+		else {
 			line_length = strlen(line_buffer);
 			new_line = 0;
 		}
 
 		/* (Re)allocates some space for the (additional) nucleotides */
-		*sample_segment = (char *) realloc(*sample_segment, sizeof(char) * (sequence_length + line_length) );
+		*sample_segment = (char *)realloc(*sample_segment, sizeof(char) * (sequence_length + line_length));
 
 		/* Copies the contents of the line buffer to the end of the dynamically (re)allocated memory */
 		for (i = 0; i < line_length; ++i) {
-			*( *sample_segment + sequence_length + i) = line_buffer[i];
+			*(*sample_segment + sequence_length + i) = line_buffer[i];
 		}
 		sequence_length += line_length;
 	}
 
 	/* Adds terminating null character to sample, so we can treat it as a null-terminated string */
-	*sample_segment = (char *) realloc( *sample_segment, sizeof(char) * (sequence_length + 1) );
-	*( *sample_segment + sequence_length) = '\0';
+	*sample_segment = (char *)realloc(*sample_segment, sizeof(char) * (sequence_length + 1));
+	*(*sample_segment + sequence_length) = '\0';
 
 	/* Acquires number of candidate sequences (from the third line of the file) */
-	fgets( line_buffer, BUFSIZE, file_pointer);
-    return_value = sscanf_s( line_buffer, "%d", &number_of_candidates );
+	fgets(line_buffer, BUFSIZE, file_pointer);
+	return_value = sscanf_s(line_buffer, "%d", &number_of_candidates);
 
 	/* Allocates pointers for correct number of candidate sequences */
-	*candidate_segments = (char **) malloc( sizeof(char *) * number_of_candidates);
+	*candidate_segments = (char **)malloc(sizeof(char *) * number_of_candidates);
 	for (i = 0; i < number_of_candidates; ++i) {
-		*( *candidate_segments + i) = NULL; /* What happens if we omit this line? */
+		*(*candidate_segments + i) = NULL; /* What happens if we omit this line? */
 	}
 
 	/* Copies each candidate sequence, in order, from the file to the memory we just
@@ -391,40 +387,41 @@ int extract_dna( FILE * file_pointer, char ** sample_segment, char *** candidate
 		new_line = 0; /* Resets the variable */
 
 		/* Here's an easy way to ignore each candidate sequence's header */
-		while ( ( character = fgetc( file_pointer ) ) != '\n' ) { ; }
+		while ((character = fgetc(file_pointer)) != '\n') { ; }
 
 		/* Acquires candidate sequence */
-		while ( new_line == 0 && fgets( line_buffer, BUFSIZE, file_pointer)) {
+		while (new_line == 0 && fgets(line_buffer, BUFSIZE, file_pointer)) {
 
 			/* Check if the line ends with a newline character and sets length */
-			if (line_buffer[ strlen(line_buffer) - 1 ] == '\n') {
+			if (line_buffer[strlen(line_buffer) - 1] == '\n') {
 				new_line = 1;
 				line_length = strlen(line_buffer) - 1;
-			} else {
+			}
+			else {
 				line_length = strlen(line_buffer);
 				new_line = 0;
 			}
 
 			/* (Re)allocates some space for the (additional) nucleotides */
-			*( *candidate_segments + i) = (char *) realloc(*( *candidate_segments + i), sizeof(char) * (sequence_length + line_length) );
+			*(*candidate_segments + i) = (char *)realloc(*(*candidate_segments + i), sizeof(char) * (sequence_length + line_length));
 
 			/* Copies the contents of the line buffer to the end of the dynamically (re)allocated memory */
 			for (j = 0; j < line_length; ++j) {
-				*( *( *candidate_segments + i) + sequence_length + j) = line_buffer[j];
+				*(*(*candidate_segments + i) + sequence_length + j) = line_buffer[j];
 			}
 			sequence_length += line_length;
 		}
 
 		/* Adds terminating null character to candidate, so we can treat it as a null-terminated string */
-		*( *candidate_segments + i) = (char *) realloc(*( *candidate_segments + i), sizeof(char) * (sequence_length + 1) );
-		*( *( *candidate_segments + i) + sequence_length) = '\0';
+		*(*candidate_segments + i) = (char *)realloc(*(*candidate_segments + i), sizeof(char) * (sequence_length + 1));
+		*(*(*candidate_segments + i) + sequence_length) = '\0';
 		new_line = 0;
 	}
 
 	return number_of_candidates;
 }
 
-/* 
+/*
  * Analyzes the segments.  This is a simple and straight-forward algorithm which does
  * not include any optimization, except that it returns immediately if a perfect match is found.
  *
@@ -449,28 +446,28 @@ int extract_dna( FILE * file_pointer, char ** sample_segment, char *** candidate
  * POST:      NULL
  * RETURN:    VOID
  */
-void analyze_segments( char * sample_segment, char ** candidate_segments, int number_of_candidates )
+void analyze_segments(char * sample_segment, char ** candidate_segments, int number_of_candidates)
 {
 	/* Some helpful variables you might want to use */
-	int * scores          = NULL;
-	int sample_length     = 0;
-	int candidate_length[1]  = 0;
-	int i                 = 0;
+	int * scores = NULL;
+	int sample_length = 0;
+	int candidate_length = 0;
+	int i = 0;
 	int has_perfect_match = 0;
-	int score             = 0;
+	int score = 0;
 	int checking = 0;
 
 	/* Hint: Check to see if any candidate segment(s) are a perfect match, and report them
 	   (REMEMBER: don't ignore trailing nucleotides when searching for a perfect score) */
-	
+
 	sample_length = strlen(sample_segment); //assigning lengths from file inputs
 	for (i = 0; i < number_of_candidates; i++) {
-		candidate_length[i] = strlen(candidate_segments[i]);
+		candidate_length = strlen(candidate_segments[i]);
 	}
 
 	for (i = 0; i < number_of_candidates; i++) //checkes all candidate segments
 	{
-		if (sample_length = candidate_length[i]) // ensures they are the same length 
+		if (sample_length = candidate_length) // ensures they are the same length 
 		{
 			has_perfect_match = strcmp(sample_segment, candidate_segments[i], sample_length);
 			if (has_perfect_match != 0) {
@@ -480,26 +477,26 @@ void analyze_segments( char * sample_segment, char ** candidate_segments, int nu
 		}
 	}
 	/* Hint: Return early if we have found and reported perfect match(es) */
-	
+
 	if (checking == 1) //will break functino early if there were perfect matches
 		return;
 
 
 	/* Hint: Otherwise we need to calculate and print all of the scores by invoking
 	   calculate_score for each candidate_segment and printing each result */
-	for (i = 0; i < number_of_candidates; ++i) 
+	for (i = 0; i < number_of_candidates; ++i)
 	{
 		// Insert your code here - maybe a call to calculate_score?
-		score = 0; 
+		score = 0;
 		score = calculate_score(sample_segment, candidate_segments[i]);
-		printf("Candidate number %d matches with a score of %d\n", i, score); 
+		printf("Candidate number %d matches with a score of %d\n", i, score);
 	}
 
 	/* End of function */
 	return;
 }
 
-/* 
+/*
  * Compares the sample segment and the candidate segment and calculates a
  * score based on these rules:
  *
@@ -528,30 +525,45 @@ void analyze_segments( char * sample_segment, char ** candidate_segments, int nu
  * POST:      NULL
  * RETURN:    An int score representing to degree to which the two segments match.
  */
-int calculate_score( char * sample_segment, char * candidate_segment)
+int calculate_score(char * sample_segment, char * candidate_segment)
 {
 	/* Some helpful variables you might (or might not) want to use */
 	int temp_score = 0;
-	int score      = 0;
-    int iterations = 0;
+	int score = 0;
+	int iterations = 0;
 
-	int sample_length    = strlen( sample_segment );
-	int candidate_length = strlen( candidate_segment );
+	int sample_length = strlen(sample_segment);
+	int candidate_length = strlen(candidate_segment);
 	int sample_length_in_codons = sample_length / 3;
-	int candidate_codon_length; 
+	int candidate_codon_length;
+	int candidate_length_in_condons = candidate_length / 3; 
 	// Insert your code here (replace this return statement with your own code)
 	int candidate_codon_location; // new var
 	int sample_codon_location; // also new var
-
-	for (candidate_codon_location = 0; candidate_codon_location < candidate_length_in_codons; candidate_codon_location++) {
+	char temp_sample[3]; 
+	char temp_candidate[3]; 
+	int j; 
+	
+	//FOR EACH LENGTH OF CODONS 
+	//case for 2 cdodon as dif but same amino acid
+	for (candidate_codon_location = 0; candidate_codon_location < candidate_length_in_condons; candidate_codon_location++) {
 		for (sample_codon_location = 0; sample_codon_location < sample_length_in_codons; sample_codon_location++) {
-			if (sample_codon_location * 3 + candidate_codon_location * 3 > candidate_length_in_codons) { // checks for sample overrun
-				break;
+			//case:  IF the two codons are EXACTLY the same, add 10 to the score
+			for (j =0 ; j < sample_length_in_codons; j++) {
+				temp_sample[0] = sample_segment[sample_codon_location + (j * 3)]; 
+				temp_sample[1] = sample_segment[sample_codon_location + (j * 3 + 1)];
+				temp_sample[2] = sample_segment[sample_codon_location + (j * 3 + 2)];
+
+				temp_candidate[0] = candidate_segment[candidate_codon_location + (j * 3)];
+				temp_candidate[1] = candidate_segment[candidate_codon_location + (j * 3 + 1)];
+				temp_candidate[2] = candidate_segment[candidate_codon_location + (j * 3 + 2)];
+
+				if (temp_sample == temp_candidate)
+					score +=10; 
 			}
-			else {
-				// case: IF NOT matching codon & IF NOT same amino acid
-				int i;
-				for (i = 0; i < 3; i++) {
+			// case: IF NOT matching codon & IF NOT same amino acid
+			int i;
+			for (i = 0; i < 3; i++) {
 				if (sample_segment[sample_codon_location * 3 + i] == candidate_segment[candidate_codon_location * 3 + sample_codon_location * 3 + i]) {
 					score += 2;
 				}
@@ -567,19 +579,27 @@ int calculate_score( char * sample_segment, char * candidate_segment)
 				else if (sample_segment[sample_codon_location * 3 + i] == 'G' && candidate_segment[candidate_codon_location * 3 + sample_codon_location * 3 + i] == 'C') {
 					score += 1;
 				}
-			
 			}
-			
 		}
-		//strncmp(sample_segment, candidate_segment, 3);
-
 	}
 	return score;
 }
 
 /*
 for (candidate_codon_length = candidate_length / 3; candidate_codon_length >= 0; candidate_codon_length--) {
-		strncmp(sample_segment, candidate_segment, 3); 
-
+		strncmp(sample_segment, candidate_segment, 3);
 	}
 */
+
+/*//case compare if condons match exactly
+	for (sample_length_in_codons; sample_length_in_codons > 0; sample_length_in_codons--) {
+		for (position_candidate = 0; position_candidate <= candidate_length; position_candidate=+3) {
+			match = 0;
+			match = strcmp(candidate_segment[position_candidate], sample_segment[position_sample], 3);
+			if (match != 0)
+				score = +10;
+			else if  ()								//else if the 2 codons are different but specify the same amino acid, add 5 to the score
+
+		}
+
+	}*/
