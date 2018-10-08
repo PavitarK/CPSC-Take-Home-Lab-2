@@ -545,25 +545,31 @@ int calculate_score( char * sample_segment, char * candidate_segment)
 
 	for (candidate_codon_location = 0; candidate_codon_location < candidate_length_in_codons; candidate_codon_location++) {
 		for (sample_codon_location = 0; sample_codon_location < sample_length_in_codons; sample_codon_location++) {
-			// case: IF NOT matching codon & IF NOT same amino acid
-			int i;
-			for (i = 0; i < 3; i++) {
-			if (sample_segment[sample_codon_location * 3 + i] == candidate_segment[candidate_codon_location * 3 + sample_codon_location * 3 + i]) {
-				score += 2;
+			if (sample_codon_location * 3 + candidate_codon_location * 3 > candidate_length_in_codons) { // checks for sample overrun
+				break;
 			}
-			else if (sample_segment[sample_codon_location * 3 + i] == 'A' && candidate_segment[candidate_codon_location * 3 + sample_codon_location * 3 + i] == 'T') {
-				score += 1;
+			else {
+				// case: IF NOT matching codon & IF NOT same amino acid
+				int i;
+				for (i = 0; i < 3; i++) {
+				if (sample_segment[sample_codon_location * 3 + i] == candidate_segment[candidate_codon_location * 3 + sample_codon_location * 3 + i]) {
+					score += 2;
+				}
+				else if (sample_segment[sample_codon_location * 3 + i] == 'A' && candidate_segment[candidate_codon_location * 3 + sample_codon_location * 3 + i] == 'T') {
+					score += 1;
+				}
+				else if (sample_segment[sample_codon_location * 3 + i] == 'T' && candidate_segment[candidate_codon_location * 3 + sample_codon_location * 3 + i] == 'A') {
+					score += 1;
+				}
+				else if (sample_segment[sample_codon_location * 3 + i] == 'C' && candidate_segment[candidate_codon_location * 3 + sample_codon_location * 3 + i] == 'G') {
+					score += 1;
+				}
+				else if (sample_segment[sample_codon_location * 3 + i] == 'G' && candidate_segment[candidate_codon_location * 3 + sample_codon_location * 3 + i] == 'C') {
+					score += 1;
+				}
+			
 			}
-			else if (sample_segment[sample_codon_location * 3 + i] == 'T' && candidate_segment[candidate_codon_location * 3 + sample_codon_location * 3 + i] == 'A') {
-				score += 1;
-			}
-			else if (sample_segment[sample_codon_location * 3 + i] == 'C' && candidate_segment[candidate_codon_location * 3 + sample_codon_location * 3 + i] == 'G') {
-				score += 1;
-			}
-			else if (sample_segment[sample_codon_location * 3 + i] == 'G' && candidate_segment[candidate_codon_location * 3 + sample_codon_location * 3 + i] == 'C') {
-				score += 1;
-			}
-}
+			
 		}
 		//strncmp(sample_segment, candidate_segment, 3);
 
