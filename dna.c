@@ -549,17 +549,16 @@ int calculate_score(char * sample_segment, char * candidate_segment)
 	for (candidate_codon_location = 0; candidate_codon_location < candidate_length_in_condons; candidate_codon_location++) {
 		for (sample_codon_location = 0; sample_codon_location < sample_length_in_codons; sample_codon_location++) {
 			//case:  IF the two codons are EXACTLY the same, add 10 to the score
-			for (j =0 ; j < sample_length_in_codons; j++) {
-				temp_sample[0] = sample_segment[sample_codon_location + (j * 3)]; 
-				temp_sample[1] = sample_segment[sample_codon_location + (j * 3 + 1)];
-				temp_sample[2] = sample_segment[sample_codon_location + (j * 3 + 2)];
+			temp_sample[0] = sample_segment[sample_codon_location*3];
+			temp_sample[1] = sample_segment[sample_codon_location*3+1];
+			temp_sample[2] = sample_segment[sample_codon_location*3+2];
 
-				temp_candidate[0] = candidate_segment[candidate_codon_location + (j * 3)];
-				temp_candidate[1] = candidate_segment[candidate_codon_location + (j * 3 + 1)];
-				temp_candidate[2] = candidate_segment[candidate_codon_location + (j * 3 + 2)];
+			temp_candidate[0] = candidate_segment[candidate_codon_location*3+sample_codon_location*3];
+			temp_candidate[1] = candidate_segment[candidate_codon_location*3+1+sample_codon_location*3];
+			temp_candidate[2] = candidate_segment[candidate_codon_location*3+2+sample_codon_location*3];
 
-				if (temp_sample == temp_candidate)
-					score +=10; 
+			if (temp_sample == temp_candidate){
+				score +=10; 
 			}
 			// case: IF NOT matching codon & IF NOT same amino acid
 			int i;
@@ -603,3 +602,19 @@ for (candidate_codon_length = candidate_length / 3; candidate_codon_length >= 0;
 		}
 
 	}*/
+
+/*
+			//case:  IF the two codons are EXACTLY the same, add 10 to the score
+			for (j =0 ; j < sample_length_in_codons; j++) {
+				temp_sample[0] = sample_segment[sample_codon_location + (j * 3)]; 
+				temp_sample[1] = sample_segment[sample_codon_location + (j * 3 + 1)];
+				temp_sample[2] = sample_segment[sample_codon_location + (j * 3 + 2)];
+
+				temp_candidate[0] = candidate_segment[candidate_codon_location + (j * 3)];
+				temp_candidate[1] = candidate_segment[candidate_codon_location + (j * 3 + 1)];
+				temp_candidate[2] = candidate_segment[candidate_codon_location + (j * 3 + 2)];
+
+				if (temp_sample == temp_candidate)
+					score +=10; 
+			}
+*/
