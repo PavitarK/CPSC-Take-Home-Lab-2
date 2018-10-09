@@ -6,9 +6,9 @@
 			  specified sample.  The formatted DNA
 			  sequence file is a txt file (threes samples
 			  are provided in the Resource Files folder).
- Author:			Your names
- Student #s:	12345678 and 12345678
- CS Accounts:	a1a1 and b2b2
+ Author:			Pavitar Kalra
+ Student #s:	86229853 and 12345678
+ CS Accounts: k0w1b and b2b2
  Date:				Add the date here
  */
 
@@ -453,7 +453,7 @@ void analyze_segments(char * sample_segment, char ** candidate_segments, int num
 	int sample_length = 0;
 	int candidate_length = 0;
 	int i = 0;
-	int has_perfect_match = 0;
+	int has_perfect_match = 1;
 	int score = 0;
 	int checking = 0;
 
@@ -461,35 +461,33 @@ void analyze_segments(char * sample_segment, char ** candidate_segments, int num
 	   (REMEMBER: don't ignore trailing nucleotides when searching for a perfect score) */
 
 	sample_length = strlen(sample_segment); //assigning lengths from file inputs
-	for (i = 0; i < number_of_candidates; i++) {
-		candidate_length = strlen(candidate_segments[i]);
-	}
 
-	for (i = 0; i < number_of_candidates; i++) //checkes all candidate segments
-	{
-		if (sample_length = candidate_length) // ensures they are the same length 
-		{
-			has_perfect_match = strcmp(sample_segment, candidate_segments[i], sample_length);
-			if (has_perfect_match != 0) {
-				printf("Candidate number %d is a perfect match\n", i); // output if they are perfect matches
-				checking = 1;
+	for (i = 0; i < number_of_candidates; i++) {  //checkes all candidate segments
+		candidate_length = strlen(candidate_segments[i]);
+			if (sample_length = candidate_length) // ensures they are the same length 
+			{
+				has_perfect_match = 1;
+				has_perfect_match = strcmp(sample_segment, candidate_segments[i]);
+				if (has_perfect_match == 0) {
+					printf("Candidate number %d is a perfect match\n", (i+1)); // output if they are perfect matches
+					checking = 1;
+				}
 			}
-		}
 	}
 	/* Hint: Return early if we have found and reported perfect match(es) */
 
 	if (checking == 1) //will break functino early if there were perfect matches
-		return;
-
-
-	/* Hint: Otherwise we need to calculate and print all of the scores by invoking
-	   calculate_score for each candidate_segment and printing each result */
-	for (i = 0; i < number_of_candidates; ++i)
-	{
-		// Insert your code here - maybe a call to calculate_score?
-		score = 0;
-		score = calculate_score(sample_segment, candidate_segments[i]);
-		printf("Candidate number %d matches with a score of %d\n", i, score);
+		return 0;
+	else {
+		/* Hint: Otherwise we need to calculate and print all of the scores by invoking
+		   calculate_score for each candidate_segment and printing each result */
+		for (i = 0; i < number_of_candidates; ++i)
+		{
+			// Insert your code here - maybe a call to calculate_score?
+			score = 0;
+			score = calculate_score(sample_segment, candidate_segments[i]);
+			printf("Candidate number %d matches with a score of %d\n", (i+1), score);
+		}
 	}
 
 	/* End of function */
@@ -596,7 +594,7 @@ int calculate_score(char * sample_segment, char * candidate_segment)
 					else if ((temp_sample == 'TTA' && temp_candidate == 'TTG') || (temp_sample == 'TTG' && temp_candidate == 'TTA')) { // leucine
 						score += 5;
 					}
-					else if (temp_sample[0:1] == temp_candidate[0:1]) { // any other possible amino acid
+					else if (temp_sample[0]==temp_candidate[0] && temp_sample[1] == temp_candidate[1] ){ // any other possible amino acid
 						score += 5;
 					}
 					else {
@@ -646,18 +644,18 @@ for (candidate_codon_length = candidate_length / 3; candidate_codon_length >= 0;
 
 	}*/
 
-/*
-			//case:  IF the two codons are EXACTLY the same, add 10 to the score
-			for (j =0 ; j < sample_length_in_codons; j++) {
-				temp_sample[0] = sample_segment[sample_codon_location + (j * 3)]; 
-				temp_sample[1] = sample_segment[sample_codon_location + (j * 3 + 1)];
-				temp_sample[2] = sample_segment[sample_codon_location + (j * 3 + 2)];
+	/*
+				//case:  IF the two codons are EXACTLY the same, add 10 to the score
+				for (j =0 ; j < sample_length_in_codons; j++) {
+					temp_sample[0] = sample_segment[sample_codon_location + (j * 3)];
+					temp_sample[1] = sample_segment[sample_codon_location + (j * 3 + 1)];
+					temp_sample[2] = sample_segment[sample_codon_location + (j * 3 + 2)];
 
-				temp_candidate[0] = candidate_segment[candidate_codon_location + (j * 3)];
-				temp_candidate[1] = candidate_segment[candidate_codon_location + (j * 3 + 1)];
-				temp_candidate[2] = candidate_segment[candidate_codon_location + (j * 3 + 2)];
+					temp_candidate[0] = candidate_segment[candidate_codon_location + (j * 3)];
+					temp_candidate[1] = candidate_segment[candidate_codon_location + (j * 3 + 1)];
+					temp_candidate[2] = candidate_segment[candidate_codon_location + (j * 3 + 2)];
 
-				if (temp_sample == temp_candidate)
-					score +=10; 
-			}
-*/
+					if (temp_sample == temp_candidate)
+						score +=10;
+				}
+	*/
