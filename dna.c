@@ -536,47 +536,90 @@ int calculate_score(char * sample_segment, char * candidate_segment)
 	int candidate_length = strlen(candidate_segment);
 	int sample_length_in_codons = sample_length / 3;
 	int candidate_codon_length;
-	int candidate_length_in_condons = candidate_length / 3; 
-	// Insert your code here (replace this return statement with your own code)
-	int candidate_codon_location; // new var
-	int sample_codon_location; // also new var
-	char temp_sample[3]; 
-	char temp_candidate[3]; 
-	int j; 
-	
-	//FOR EACH LENGTH OF CODONS 
-	//case for 2 cdodon as dif but same amino acid
+	int candidate_length_in_condons = candidate_length / 3;
+	int candidate_codon_location;
+	int sample_codon_location;
+	char temp_sample[3];
+	char temp_candidate[3];
+
+
 	for (candidate_codon_location = 0; candidate_codon_location < candidate_length_in_condons; candidate_codon_location++) {
 		for (sample_codon_location = 0; sample_codon_location < sample_length_in_codons; sample_codon_location++) {
-			//case:  IF the two codons are EXACTLY the same, add 10 to the score
-			temp_sample[0] = sample_segment[sample_codon_location*3];
-			temp_sample[1] = sample_segment[sample_codon_location*3+1];
-			temp_sample[2] = sample_segment[sample_codon_location*3+2];
-
-			temp_candidate[0] = candidate_segment[candidate_codon_location*3+sample_codon_location*3];
-			temp_candidate[1] = candidate_segment[candidate_codon_location*3+1+sample_codon_location*3];
-			temp_candidate[2] = candidate_segment[candidate_codon_location*3+2+sample_codon_location*3];
-
-			if (temp_sample == temp_candidate){
-				score +=10; 
+			if (sample_codon_location * 3 + candidate_codon_location * 3 > candidate_length_in_condons) { // sample overrun check
+				break;
 			}
-			// case: IF NOT matching codon & IF NOT same amino acid
-			int i;
-			for (i = 0; i < 3; i++) {
-				if (sample_segment[sample_codon_location * 3 + i] == candidate_segment[candidate_codon_location * 3 + sample_codon_location * 3 + i]) {
-					score += 2;
+			else {
+				//case 1:  IF the two codons are EXACTLY the same, add 10 to the score
+				temp_sample[0] = sample_segment[sample_codon_location * 3];
+				temp_sample[1] = sample_segment[sample_codon_location * 3 + 1];
+				temp_sample[2] = sample_segment[sample_codon_location * 3 + 2];
+
+				temp_candidate[0] = candidate_segment[candidate_codon_location * 3 + sample_codon_location * 3];
+				temp_candidate[1] = candidate_segment[candidate_codon_location * 3 + 1 + sample_codon_location * 3];
+				temp_candidate[2] = candidate_segment[candidate_codon_location * 3 + 2 + sample_codon_location * 3];
+
+				if (temp_sample == temp_candidate) {
+					score += 10;
 				}
-				else if (sample_segment[sample_codon_location * 3 + i] == 'A' && candidate_segment[candidate_codon_location * 3 + sample_codon_location * 3 + i] == 'T') {
-					score += 1;
-				}
-				else if (sample_segment[sample_codon_location * 3 + i] == 'T' && candidate_segment[candidate_codon_location * 3 + sample_codon_location * 3 + i] == 'A') {
-					score += 1;
-				}
-				else if (sample_segment[sample_codon_location * 3 + i] == 'C' && candidate_segment[candidate_codon_location * 3 + sample_codon_location * 3 + i] == 'G') {
-					score += 1;
-				}
-				else if (sample_segment[sample_codon_location * 3 + i] == 'G' && candidate_segment[candidate_codon_location * 3 + sample_codon_location * 3 + i] == 'C') {
-					score += 1;
+				else {
+					//case 2: IF 2 codons NOT EXACTLY SAME, check for matching amino acids
+					if ((temp_sample == 'AGT' && temp_candidate == 'AGC') || (temp_candidate == 'AGT' && temp_sample == 'AGC')) { // Serine
+						score += 5;
+					}
+					else if ((temp_sample == 'AGA' && temp_candidate == 'AGG') || (temp_sample == 'AGG' && temp_candidate == 'AGA')) { // Arginine (doesn't include ALL Arginine codons)
+						score += 5;
+					}
+					else if ((temp_sample == 'TGT' && temp_candidate == 'TGC') || (temp_sample == 'TGC' && temp_candidate == 'TGT')) { // cysteine
+						score += 5;
+					}
+					else if ((temp_sample == 'TGA' || temp_sample == 'TAA' || temp_sample == 'TAG') && (temp_candidate == 'TGA' || temp_candidate == 'TAA' || temp_candidate == 'TAG')) { // stop
+						score += 5;
+					}
+					else if ((temp_sample == 'AAA' && temp_candidate == 'AAG') || (temp_sample == 'AAG' && temp_candidate == 'AAA')) { // lysine
+						score += 5;
+					}
+					else if ((temp_sample == 'AAT' && temp_candidate == 'AAC') || (temp_sample == 'AAC' && temp_candidate == 'AAA')) { // asparagine
+						score += 5;
+					}
+					else if ((temp_sample == 'CAT' && temp_candidate == 'CAC') || (temp_sample == 'CAC' && temp_candidate == 'CAT')) { // histidine
+						score += 5;
+					}
+					else if ((temp_sample == 'CAA' && temp_candidate == 'CAG') || (temp_sample == 'CAG' && temp_candidate == 'CAA')) { // glutamine
+						score += 5;
+					}
+					else if ((temp_sample == 'TAT' && temp_candidate == 'TAC') || (temp_sample == 'TAC' && temp_candidate == 'TAT')) { // tyrosine
+						score += 5;
+					}
+					else if ((temp_sample == 'TTT' && temp_candidate == 'TTC') || (temp_sample == 'TTC' && temp_candidate == 'TTT')) { // phenylalanine
+						score += 5;
+					}
+					else if ((temp_sample == 'TTA' && temp_candidate == 'TTG') || (temp_sample == 'TTG' && temp_candidate == 'TTA')) { // leucine
+						score += 5;
+					}
+					else if (temp_sample[0:1] == temp_candidate[0:1]) { // any other possible amino acid
+						score += 5;
+					}
+					else {
+						// case: IF NOT matching codon & IF NOT same amino acid, check for similar neucleotides and matching base pairs
+						int i;
+						for (i = 0; i < 3; i++) {
+							if (sample_segment[sample_codon_location * 3 + i] == candidate_segment[candidate_codon_location * 3 + sample_codon_location * 3 + i]) { // FIRST check for similar neucleuotides
+								score += 2;
+							}
+							else if (sample_segment[sample_codon_location * 3 + i] == 'A' && candidate_segment[candidate_codon_location * 3 + sample_codon_location * 3 + i] == 'T') { // NEXT check for matching base pairs
+								score += 1;
+							}
+							else if (sample_segment[sample_codon_location * 3 + i] == 'T' && candidate_segment[candidate_codon_location * 3 + sample_codon_location * 3 + i] == 'A') { // "                                "
+								score += 1;
+							}
+							else if (sample_segment[sample_codon_location * 3 + i] == 'C' && candidate_segment[candidate_codon_location * 3 + sample_codon_location * 3 + i] == 'G') { // "                                "
+								score += 1;
+							}
+							else if (sample_segment[sample_codon_location * 3 + i] == 'G' && candidate_segment[candidate_codon_location * 3 + sample_codon_location * 3 + i] == 'C') { // "                                "
+								score += 1;
+							}
+						}
+					}
 				}
 			}
 		}
